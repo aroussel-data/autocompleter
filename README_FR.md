@@ -1,17 +1,17 @@
-# Python Autocompleter
+# Auto-complétion en Python
 
-A basic autocompletion tool written using only the Python standard library. Made available via
-web API, returning a JSON object.
+Outil de auto-complétion ecrit en utilisant seulement la bibliothèque standard de Python. Mis à disposition via 
+API web, qui renvoie un objet JSON.
 
-## Setup
+## Exigences (sp?)
+- Python 3
 
-## Testing
+## Tester
+`python webserver.py`
+## Contraintes
+Système implémenté uniquement avec la bibliothèque standard de Python. Docs à https://docs.python.org/3/library/.
 
-## Constraints
-No use of any external python libraries, there limited to the Standard Python Library whose
-docs can be found at https://docs.python.org/3/library/.
-
-## Improvements
+## Améliorations 
 
 - Since I only need to create a single API endpoint without any authentication hosted locally, I can get away with
   using Python's `http.server` module. However, a more robust production API would likely
@@ -35,3 +35,4 @@ docs can be found at https://docs.python.org/3/library/.
 - But then if I wanted to use something like `bisect` to do a binary search, I'd need the data structure to have a
   hashed key, which would mean iterating over the whole strucutre to add the key anyway, which seems equivalent
   in performance to my current solution.
+- Definitely would need to add some input checking because atm if we pass in nothing it matches everything
