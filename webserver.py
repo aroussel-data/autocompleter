@@ -42,5 +42,5 @@ handler_object = RequestHandler
 PORT = 8000
 my_server = socketserver.TCPServer(("127.0.0.1", PORT), handler_object)
 
-# Star the server
+# run the server
 my_server.serve_forever()
