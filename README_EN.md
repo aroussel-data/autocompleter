@@ -3,9 +3,11 @@ A basic autocompletion tool written using only the Python standard library. Made
 web API, returning a JSON object.
 
 ## Requirements
-Python 3.8
+Python 3
 
 ## Testing
+Clone the repo using `git clone https://github.com/aroussel-data/autocompleter.git` or download as .zip.
+
 From the `autocompleter/` directory
 
 Launch the web server using: `python webserver.py`

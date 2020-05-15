@@ -4,9 +4,11 @@ Outil de auto-complétion ecrit en utilisant seulement la bibliothèque standard
 API web, qui renvoie un objet JSON.
 
 ## Exigences
-- Python 3
+Python 3
 
 ## Tester
+Téléchargez le répertoire `git clone https://github.com/aroussel-data/autocompleter.git` ou téléchargez au format .zip.
+
 Depuis le répertoire `autocompleter/`
 
 Lancez le serveur web: `python webserver.py`
