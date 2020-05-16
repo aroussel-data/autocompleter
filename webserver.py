@@ -11,6 +11,13 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     """
     Create a RequestHandler class which inherets from SimpleHTTPRequestHandler.
     """
+    def create_trie(self):
+        # sort check of TERMS list
+        # create 'my_trie' by instantiating Trie tree
+        # run import of TERMS into 'my_trie'
+        pass
+        # ADD AN INIT(?) METHOD THAT INITIALISES THE TRIE TREE ONLY ONCE SO NOT DONE EVERY TIME THERE IS A GET REQUEST
+
     def do_GET(self):
 
         self.send_response(200)  # OK response
@@ -26,6 +33,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 
         if len(to_match) > 0:
             result = matcher(to_match, TERMS)  # get the first 4 sorted elements that match
+            # call my_trie.prefix_search(to_match)
         else:
             result = ''
 
@@ -38,6 +46,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 
 # instantiate RequestHandler
 handler_object = RequestHandler
+# handler_object.create_trie()
 
 PORT = 8000
 my_server = socketserver.TCPServer(("127.0.0.1", PORT), handler_object)
