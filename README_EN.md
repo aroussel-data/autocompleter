@@ -1,6 +1,7 @@
 # Python Autocompleter
-A basic autocompletion tool written using only the Python standard library. Made available via
-web API, returning a JSON object.
+A Trie tree based autocompletion tool written using the Python standard library. Made available via
+web API, returning a JSON object. It returns the first 4 alphabetically sorted elements of the word
+dictionary whose prefix matches the submitted query.
 
 ## Requirements
 Python 3
@@ -21,35 +22,46 @@ docs can be found at https://docs.python.org/3/library/.
 ## Improvements
 Q) How to improve the relevance of the suggestions?
 
-- Perhaps we could combine duplicate fields, such as 'computer network defense', 'data', or 'symmetric'
-  or pre-make some categories such as cryptography. One other option might be using user's past search
-  history to predict which word they're most likely to search for. 
+- One way to improve the relevance of suggestions is to allow for minor spelling mistakes, by allowing
+  for the Trie to search along not just the exact path but also nearby paths with nodes close to the
+  correct spelling, which will allow to recognise slightly misspelled words.
+  
+  We could also add a priority score to certain words that are perhaps more common/important by storing 
+  the score in each word's leaf node, and presenting the result based on priority score. This score 
+  could also be based on the frequency of times it has already been searched by the user, by keeping 
+  a counter of searches in each word's leaf node.
 
 Q) How to handle larger lists of terms?
 
-- Out of curiosity I looked up the maximum number of elements a python list can store and it appears
-  to be approx. 536,870,912 elements (on a 32 bit system), and there are only approx. 170k and 130k words in
-  English and French languages respectively, so maybe we wouldn't exceed this number!
+- After my first inefficient brute force attempt, I realised that in fact there was a data structure that
+  is particularly optimal for auto-completion. This is the Trie tree data structure 
+  (https://en.wikipedia.org/wiki/Trie), which is fast at inserting and retrieving strings, especially based on string 
+  prefixes (as is the case in auto-completion).
   
-  But to attempt to answer the question, normally python lists (dynamic arrays) have constant O(1) time complexity for
-  lookups. However, I believe this is only if we know the value or index of the value in the list. In my case, because
-  we want to match the start of a string in a potentially unsorted list of strings, some amount of iteration over the
-  list is required.
-  
-  I thought about implementing a solution like Binary Search which would use the python built in `bisect`, but then
-  I realised that this would most likely require the data structure to have a index/hashed key and that creating this
-  index/hashed key would require iterating over the list anyway, which seemed redundant. That is why I settled on a
-  solution which iterates over the list once, and so should have a linear time complexity O(N), where N is the number
-  of elements in the list. 
-  One improvement might be rather than iterating over all elements we could iterate until the first 4 
-  matches are done, but there is also no guarantee that the elements that will match are not at the end of the list so
-  we might still need to iterate over all elements, e.g. if the 4th match is the last element in the list.
-  
-  I think for truly large lists we would need to consider a database rather than in-memory processing.    
+  After a bit of research, I found out that the Binary Search tree that I had discussed previously, while
+  a better approach than a brute force search of the list, is still not as optimal as a Trie, as Binary Search
+  has a search time complexity of O(log N) where N is the number of terms in the dictionary.
 
+  I learnt that one of the advantages of using a Trie, is that the search time is independent of the size of the
+  word dictionary, and that the number of steps needed to find a prefix is the same as the number of
+  letters in the prefix.
+  
+  If we wanted to further improve the Trie tree implementation, we could take into account words with
+  the same suffixes and minimise the number of nodes in the Trie tree. According to online sources this can
+  be done by using a Deterministic Finite Automata (https://en.wikipedia.org/wiki/Deterministic_finite_automaton), 
+  which would point nodes to existing nodes that have the same suffix, reducing the memory
+  used by the Trie tree, which is one of the disadvantages of using a Trie tree (it uses a lot of memory).
+  This is apparently a complex solution, because a leaf node can be reached through several paths, so a
+  word's importance can be associated with its path rather than its leaf node
+  (https://futurice.com/blog/data-structures-for-fast-autocomplete).
+  
+  Lastly, if we were constrained by memory, we could implement a Ternary Search Tree 
+  (https://www.geeksforgeeks.org/ternary-search-tree/), which avoids having potentially a dict of 26
+  letters under each node (one for each letter of the alphabet) like we do in a Trie tree. This would
+  then have a search time complexity of O(h) where h is the height of the tree.
+  
 ## Notes
 
 - Since I only need to create a single API endpoint without any authentication and hosted locally, I should be able to
   use Python's basic `http.server` module. However, a more robust production API would probably need to use a web 
-  framework such as Django or Flask to handle authentication, cookies, sessions etc. 
-- Adding the ability to specify your own dictionary of terms would a good next step  
+  framework such as Django or Flask to handle authentication, cookies, sessions etc.
