@@ -23,7 +23,8 @@ class Trie:
     def recur_match(self, final_prefix_node, word):
         if final_prefix_node.word_end and len(self.result_list) < 4:
             self.result_list.append(word)
-        for letter, child_node in final_prefix_node.children.items():
+        # sort dict of children so we return words in alphabetical order
+        for letter, child_node in sorted(final_prefix_node.children.items(), key=lambda children: children[0]):
             self.recur_match(child_node, word + letter)
 
     def prefix_search(self, prefix):
@@ -37,7 +38,7 @@ class Trie:
         # now crawler will be at node that represents end of prefix, and so should now find all the child leaves
         # that are continuations of the prefix.
         self.recur_match(crawler, prefix)
-        return sorted(self.result_list)
+        return self.result_list
 
 
 # FOR TESTING WITH LARGER LISTS (crime and punishment):
