@@ -45,6 +45,19 @@ if __name__ == '__main__':
         TERMS = sorted(TERMS)
     my_trie = Trie()
     for w in TERMS:
-        my_trie.insert(w)
-    my_trie.prefix_search('crypt')
+        my_trie.insert(w.lower())
+    my_trie.prefix_search('crypt'.lower())
     print(my_trie.result_list)
+
+    # FOR TESTING WITH LARGER LISTS (crime and punishment):
+    # from urllib import request
+    # import re
+    #
+    # url = "http://www.gutenberg.org/files/2554/2554-0.txt"
+    # response = request.urlopen(url)
+    # raw = response.read().decode('utf8')
+    #
+    # raw = re.sub("[^a-zA-Z]+", " ", raw)
+    # raw = raw.lower()
+    # raw = raw.split(sep=' ')
+    # del (raw[0])
