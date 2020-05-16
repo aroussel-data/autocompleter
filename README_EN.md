@@ -1,6 +1,6 @@
 # Python Autocompleter
-A Trie tree based autocompletion tool written using the Python standard library. Made available via
-web API, returning a JSON object. It returns the first 4 alphabetically sorted elements of the word
+A Trie tree based autocompletion API written using the Python standard library. Made available via URL
+endpoint, returning a JSON object. It returns the first 4 alphabetically sorted elements of the word
 dictionary whose prefix matches the submitted query.
 
 ## Requirements
@@ -24,12 +24,15 @@ Q) How to improve the relevance of the suggestions?
 
 - One way to improve the relevance of suggestions is to allow for minor spelling mistakes, by allowing
   for the Trie to search along not just the exact path but also nearby paths with nodes close to the
-  correct spelling, which will allow to recognise slightly misspelled words.
+  correct spelling, which will allow it to recognise slightly misspelled words.
   
   We could also add a priority score to certain words that are perhaps more common/important by storing 
   the score in each word's leaf node, and presenting the result based on priority score. This score 
   could also be based on the frequency of times it has already been searched by the user, by keeping 
   a counter of searches in each word's leaf node.
+  
+  More options I came across during research can be found here 
+  (https://stackoverflow.com/questions/2901831/algorithm-for-autocomplete)
 
 Q) How to handle larger lists of terms?
 
@@ -50,7 +53,7 @@ Q) How to handle larger lists of terms?
   the same suffixes and minimise the number of nodes in the Trie tree. According to online sources this can
   be done by using a Deterministic Finite Automata (https://en.wikipedia.org/wiki/Deterministic_finite_automaton), 
   which would point nodes to existing nodes that have the same suffix, reducing the memory
-  used by the Trie tree, which is one of the disadvantages of using a Trie tree (it uses a lot of memory).
+  used by the Trie tree, which is one of the disadvantages of using a Trie tree.
   This is apparently a complex solution, because a leaf node can be reached through several paths, so a
   word's importance can be associated with its path rather than its leaf node
   (https://futurice.com/blog/data-structures-for-fast-autocomplete).
