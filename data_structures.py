@@ -31,13 +31,13 @@ class Trie:
         crawler = self.root
         for char in prefix:
             if not crawler.children.get(char):  # if current node's children don't contain char we exit
-                return None
+                return ['No matches']
             # if char in current node's children, move the crawler to that child node
             crawler = crawler.children[char]
         # now crawler will be at node that represents end of prefix, and so should now find all the child leaves
         # that are continuations of the prefix.
         self.recur_match(crawler, prefix)
-        return self.result_list
+        return sorted(self.result_list)
 
 
 # FOR TESTING WITH LARGER LISTS (crime and punishment):
