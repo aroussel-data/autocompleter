@@ -1,7 +1,6 @@
 # Auto-complétion en Python
-
-Outil de auto-complétion ecrit en utilisant seulement la bibliothèque standard de Python. Mis à disposition via 
-API web, qui renvoie un objet JSON.
+API de auto-complétion basé sur des arbres trie, ecrit en utilisant la bibliothèque standard de Python. Mis à 
+disposition via API web, qui renvoie un objet JSON.
 
 ## Exigences
 Python 3
@@ -21,38 +20,51 @@ Système implémenté uniquement avec la bibliothèque standard de Python. Docs 
 ## Améliorations 
 Q) Comment améliorer la pertinence des suggestions faites? 
 
-- Peut-être pourrions-nous combiner des champs en double, tels que 'computer network defense', 'data' ou 
-  'symmetric' ou pré-créer certaines catégories telles que la 'cryptography'. Une autre option pourrait être d'utiliser 
-  l'historique de recherche de l'utilisateur pour prédire le mot qu'il est le plus susceptible de rechercher. 
+- Une façon d'améliorer la pertinence des suggestions est de permettre des erreurs d'orthographe mineures, en 
+  permettant au Trie de rechercher non seulement le chemin exact mais également les chemins à proximité avec des 
+  nœuds proches de l'orthographe correcte, ce qui lui permettra de reconnaître les mots légèrement mal orthographiés.
+  
+  Nous pourrions également ajouter un score de priorité à certains mots qui sont peut-être plus courants / importants 
+  en stockant le score dans le nœud feuille de chaque mot et en présentant le résultat en fonction du score de priorité.
+  Ce score pourrait également être basé sur la fréquence des recherches effectuées par l'utilisateur, en conservant un 
+  compteur de recherches dans le nœud feuille de chaque mot.
+  
+  Plus d'options que j'ai trouvées au cours de mes recherches peuvent être trouvées ici 
+  (https://stackoverflow.com/questions/2901831/algorithm-for-autocomplete)
 
 Q) Comment gérer un dictionnaire de termes de taille plus conséquente?
 
-- Par curiosité, j'ai recherché le nombre maximum d'éléments qu'une liste python peut stocker et il semble être 
-  approximativement 536 870 912 elements (sur un systeme 32 bit), et il n'y a qu'environ 170 000 et 130 000 mots 
-  respectivement en anglais et en français, alors peut-être que nous ne dépasserions pas ce nombre!
+- Après ma première tentative de force brute inefficace, j'ai réalisé qu'il y avait en fait une structure de données 
+  qui est particulièrement optimale pour l'auto-complétion. Ceci est la structure de données de l'arbre Trie
+  (https://en.wikipedia.org/wiki/Trie), qui est rapide pour insérer et récupérer des chaînes, en particulier basé sur 
+  la chaîne préfixes (comme c'est le cas en auto-complétion).
   
-  Mais pour tenter de répondre à la question, normalement les listes pythons (tableaux dynamiques) ont une complexité
-  temporelle constante O(1) pour les recherches. Par contre, je crois que ce n'est que si nous connaissons la valeur 
-  ou l'indice de la valeur dans la liste. Dans mon cas, parce que nous voulons faire correspondre le début d'une chaîne 
-  dans une liste de chaînes potentiellement non triées, une certaine quantité d'itération sur la liste est nécessaire.
+  Après un peu de recherche, j'ai découvert que l'arbre de recherche binaire dont j'avais parlé précédemment, bien 
+  qu'une meilleure approche qu'une recherche par force brute de la liste, ne soit toujours pas aussi optimal qu'un 
+  Trie, car la recherche binaire a un temps de recherche complexité de O (log N) où N est le nombre de termes du 
+  dictionnaire.
   
-  J'ai pensé à implémenter une solution comme la recherche binaire qui utiliserait le built in de python `bisect`, mais 
-  j'ai réalisé que cela nécessiterait très probablement que la structure de données ait une clé d'index / de hachage et 
-  que la création de cette clé d'index / de hachage nécessiterait de toute façon une itération sur la liste, ce qui 
-  me semblait redondant. C'est pourquoi j'ai choisi une solution qui itère une fois sur la liste, et devrait donc avoir 
-  une complexité temporelle linéaire O(N), où N est le nombre d'éléments dans la liste. 
-  Une amélioration pourrait être plutôt que d'itérer sur tous les éléments que nous pourrions répéter jusqu'à ce que les
-  4 premières correspondances soient terminées, mais il n'y a également aucune garantie que les éléments qui 
-  correspondront ne sont pas à la fin de la liste, nous pourrions donc avoir besoin de répéter sur tous les éléments, 
-  par exemple, si la 4ème correspondance est le dernier élément de la liste.
+  J'ai appris que l'un des avantages de l'utilisation d'un Trie est que le temps de recherche est indépendant de la 
+  taille du dictionnaire de mots et que le nombre d'étapes nécessaires pour trouver un préfixe est le même que le 
+  nombre de lettres du préfixe.
   
-  Je pense que pour des listes vraiment volumineuses, nous devrions envisager une base de données plutôt qu'un 
-  traitement en mémoire.    
+  Si nous voulions améliorer encore la mise en œuvre de l'arbre Trie, nous pourrions prendre en compte les mots avec
+  les mêmes suffixes et minimiser le nombre de nœuds dans l'arbre Trie. Selon des sources en ligne, cela peut
+  être fait en utilisant un Deterministic Finite Automata (https://en.wikipedia.org/wiki/Deterministic_finite_automaton),
+  qui pointerait les nœuds vers des nœuds existants qui ont le même suffixe, ce qui réduit la mémoire
+  utilisé par l'arbre Trie, qui est l'un des inconvénients de l'utilisation d'un arbre Trie.
+  C'est apparemment une solution complexe, car un nœud feuille peut être atteint par plusieurs chemins, donc 
+  l'importance d'un mot peut être associée à son chemin plutôt qu'à son nœud feuille 
+  (https://futurice.com/blog/data-structures-for- saisie semi-automatique).
+  
+  Enfin, si nous étions contraints par la mémoire, nous pourrions implémenter un arbre de recherche ternaire 
+  (https://www.geeksforgeeks.org/ternary-search-tree/), ce qui évite d'avoir potentiellement un dict de 26 lettres sous 
+  chaque nœud (un pour chaque lettre de l'alphabet) comme nous le faisons dans un arbre Trie. Cela aurait alors une 
+  complexité temporelle de recherche de O (h) où h est la hauteur de l'arbre.
 
 ## Notes
 
 - Étant donné que je n'ai besoin que de créer un point d'entrée API unique sans aucune authentification et hébergé 
   localement, je devrais pouvoir utiliser le module de base `http.server` de Python. Cependant, une API de production 
   plus robuste aurait probablement besoin d'utiliser un cadre Web tel que Django ou Flask pour gérer 
-  l'authentification, les cookies, les sessions, etc. 
-- Ajouter la possibilité de spécifier votre propre dictionnaire de termes serait une bonne prochaine étape.
+  l'authentification, les cookies, les sessions, etc.
