@@ -3,23 +3,15 @@ import http.server
 import socketserver
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
-from autocomplete import matcher
 from constants import TERMS
+from data_structures import Trie
 
 
 class RequestHandler(http.server.SimpleHTTPRequestHandler):
     """
     Create a RequestHandler class which inherets from SimpleHTTPRequestHandler.
     """
-    def create_trie(self):
-        # sort check of TERMS list
-        # create 'my_trie' by instantiating Trie tree
-        # run import of TERMS into 'my_trie'
-        pass
-        # ADD AN INIT(?) METHOD THAT INITIALISES THE TRIE TREE ONLY ONCE SO NOT DONE EVERY TIME THERE IS A GET REQUEST
-
     def do_GET(self):
-
         self.send_response(200)  # OK response
         self.send_header("Content-type", "application/json")  # set the header
         # end_headers adds a blank line to denote end of headers buffer then writes it to output stream
@@ -32,8 +24,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
             to_match = query_components["query"][0].lower()  # string to be matched, e.g. 'crypt'
 
         if len(to_match) > 0:
-            result = matcher(to_match, TERMS)  # get the first 4 sorted elements that match
-            # call my_trie.prefix_search(to_match)
+            result = my_trie.prefix_search(to_match)
         else:
             result = ''
 
@@ -44,12 +35,18 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(bytes(json_result, "utf8"))
 
 
-# instantiate RequestHandler
-handler_object = RequestHandler
-# handler_object.create_trie()
+if __name__ == '__main__':
+    # instantiate RequestHandler
+    handler_object = RequestHandler
+    # instantiate Trie structure and insert terms dictionary
+    if not TERMS == sorted(TERMS):
+        TERMS = sorted(TERMS)
+    my_trie = Trie()
+    for w in TERMS:
+        my_trie.insert(w.lower())
 
-PORT = 8000
-my_server = socketserver.TCPServer(("127.0.0.1", PORT), handler_object)
+    PORT = 8000
+    my_server = socketserver.TCPServer(("127.0.0.1", PORT), handler_object)
 
-# run the server
-my_server.serve_forever()
+    # run the server
+    my_server.serve_forever()
