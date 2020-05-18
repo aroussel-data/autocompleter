@@ -63,9 +63,9 @@ Q) Comment gérer un dictionnaire de termes de taille plus conséquente?
 
   C'est apparemment une solution complexe, car un nœud feuille peut être atteint par plusieurs chemins, donc
   l'importance d'un mot peut être associée à son chemin plutôt qu'à son nœud feuille
-  (https://futurice.com/blog/data-structures-for- saisie semi-automatique). 
+  (https://futurice.com/blog/data-structures-for-fast-autocomplete). 
   
-  Enfin, si nous étions contraints par la mémoire, nous pourrions implémenter un arbre de recherch ternaire
+  Enfin, si nous étions contraints par la mémoire, nous pourrions implémenter un arbre de recherche ternaire
   (https://www.geeksforgeeks.org/ternary-search-tree/), ce qui évite d'avoir potentiellement un dict de
   26 lettres sous chaque nœud (un pour chaque lettre de l'alphabet) comme nous le faisons dans un arbre Trie. Cela
   aurait alors une complexité temporelle de recherche de O(h) où h est la hauteur de l'arbre.
